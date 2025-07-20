@@ -16,13 +16,14 @@ export function middleware(request: NextRequest) {
   }
 
   // Public paths that don't require authentication
-  const publicPaths = ['/auth/login', '/auth/register'];
+  const publicPaths = ['/auth/login', '/auth/register', '/landing'];
   
   // Check if the path is public
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   // If user is not authenticated and trying to access a protected route
-  if (!token && !isPublicPath) {
+  // Allow access to the root path and landing page
+  if (!token && !isPublicPath && pathname !== '/') {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 

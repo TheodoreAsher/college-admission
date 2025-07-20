@@ -19,10 +19,8 @@ export interface RegisterData {
   email: string;
   first_name: string;
   last_name: string;
-  phone: string;
-  cnic: string;
+  phone_number: string;
   password: string;
-  password2: string;
 }
 
 export interface LoginData {

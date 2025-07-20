@@ -18,7 +18,7 @@ export default function HomePage() {
           router.push('/admin');
         }
       } else {
-        router.push('/auth/login');
+        router.push('/landing');
       }
     }
   }, [isAuthenticated, loading, router, user]);
