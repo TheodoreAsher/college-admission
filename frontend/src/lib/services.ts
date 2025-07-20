@@ -150,7 +150,7 @@ export const studentService = {
   // Student Relatives
   async getRelatives(): Promise<StudentRelative[]> {
     const response = await api.get('/student-relatives/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async createRelative(data: StudentRelative): Promise<StudentRelative> {
@@ -170,7 +170,7 @@ export const studentService = {
   // Educational Background
   async getEducationalBackground(): Promise<EducationalBackground[]> {
     const response = await api.get('/educational-background/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async createEducationalRecord(data: EducationalBackground): Promise<EducationalBackground> {
@@ -229,7 +229,7 @@ export const programService = {
   // Programs
   async getPrograms(): Promise<Program[]> {
     const response = await api.get('/programs/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async getProgram(id: number): Promise<Program> {
@@ -254,7 +254,7 @@ export const programService = {
   // Courses
   async getCourses(): Promise<Course[]> {
     const response = await api.get('/courses/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async createCourse(data: Partial<Course>): Promise<Course> {
@@ -265,7 +265,7 @@ export const programService = {
   // Academic Sessions
   async getAcademicSessions(): Promise<AcademicSession[]> {
     const response = await api.get('/academic-sessions/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async createAcademicSession(data: Partial<AcademicSession>): Promise<AcademicSession> {
@@ -276,7 +276,7 @@ export const programService = {
   // Offered Programs
   async getOfferedPrograms(): Promise<OfferedProgram[]> {
     const response = await api.get('/offered-programs/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async createOfferedProgram(data: Partial<OfferedProgram>): Promise<OfferedProgram> {
@@ -289,7 +289,7 @@ export const programService = {
 export const applicationService = {
   async getApplications(): Promise<Application[]> {
     const response = await api.get('/applications/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async getApplication(id: number): Promise<Application> {
@@ -309,17 +309,17 @@ export const applicationService = {
 
   async getApplicationTracking(id: number): Promise<ApplicationTracking[]> {
     const response = await api.get(`/applications/${id}/tracking/`);
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async getApplicationStatistics(): Promise<any> {
     const response = await api.get('/applications/statistics/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async getApplicationStatuses(): Promise<ApplicationStatus[]> {
     const response = await api.get('/application-statuses/');
-    return response.data;
+    return response.data.results || response.data;
   },
 };
 
@@ -327,7 +327,8 @@ export const applicationService = {
 export const paymentService = {
   async getPayments(): Promise<Payment[]> {
     const response = await api.get('/payments/');
-    return response.data;
+    // Handle paginated response
+    return response.data.results || response.data;
   },
 
   async getPayment(id: number): Promise<Payment> {
@@ -364,7 +365,8 @@ export const paymentService = {
 
   async getFeeStructures(): Promise<FeeStructure[]> {
     const response = await api.get('/fee-structures/');
-    return response.data;
+    // Handle paginated response
+    return response.data.results || response.data;
   },
 
   async createFeeStructure(data: Partial<FeeStructure>): Promise<FeeStructure> {
@@ -374,7 +376,7 @@ export const paymentService = {
 
   async getPaymentMethods(): Promise<PaymentMethod[]> {
     const response = await api.get('/payment-methods/');
-    return response.data;
+    return response.data.results || response.data;
   },
 };
 
@@ -382,7 +384,7 @@ export const paymentService = {
 export const dashboardService = {
   async getAnnouncements(): Promise<Announcement[]> {
     const response = await api.get('/announcements/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async getAnnouncement(id: number): Promise<Announcement> {
@@ -406,7 +408,7 @@ export const dashboardService = {
 
   async getAdmissionStats(): Promise<AdmissionStats[]> {
     const response = await api.get('/admission-stats/');
-    return response.data;
+    return response.data.results || response.data;
   },
 };
 
@@ -414,7 +416,7 @@ export const dashboardService = {
 export const lookupService = {
   async getDegrees(): Promise<Degree[]> {
     const response = await api.get('/degrees/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async createDegree(data: Partial<Degree>): Promise<Degree> {
@@ -424,7 +426,7 @@ export const lookupService = {
 
   async getInstitutes(): Promise<Institute[]> {
     const response = await api.get('/institutes/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async createInstitute(data: Partial<Institute>): Promise<Institute> {
@@ -434,16 +436,59 @@ export const lookupService = {
 
   async getBloodGroups(): Promise<BloodGroup[]> {
     const response = await api.get('/blood-groups/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async getDiseases(): Promise<Disease[]> {
     const response = await api.get('/diseases/');
-    return response.data;
+    return response.data.results || response.data;
   },
 
   async getRoles(): Promise<any[]> {
     const response = await api.get('/roles/');
+    return response.data.results || response.data;
+  },
+};
+
+// User Management Services
+export const userManagementService = {
+  async getUsers(): Promise<User[]> {
+    const response = await api.get('/users/');
+    // Handle paginated response
+    return response.data.results || (Array.isArray(response.data) ? response.data : []);
+  },
+
+  async getUser(id: number): Promise<User> {
+    const response = await api.get(`/users/${id}/`);
+    return response.data;
+  },
+
+  async createUser(data: Partial<User>): Promise<User> {
+    const response = await api.post('/users/', data);
+    return response.data;
+  },
+
+  async updateUser(id: number, data: Partial<User>): Promise<User> {
+    const response = await api.put(`/users/${id}/`, data);
+    return response.data;
+  },
+
+  async deleteUser(id: number): Promise<void> {
+    await api.delete(`/users/${id}/`);
+  },
+
+  async activateUser(id: number): Promise<any> {
+    const response = await api.post(`/users/${id}/activate/`);
+    return response.data;
+  },
+
+  async deactivateUser(id: number): Promise<any> {
+    const response = await api.post(`/users/${id}/deactivate/`);
+    return response.data;
+  },
+
+  async changeUserRole(id: number, roleId: number): Promise<any> {
+    const response = await api.post(`/users/${id}/change_role/`, { role_id: roleId });
     return response.data;
   },
 };

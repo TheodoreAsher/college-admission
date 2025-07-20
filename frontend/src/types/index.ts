@@ -167,6 +167,10 @@ export interface Application {
   application_qrcode?: string;
   can_apply: boolean;
   payment_status: string;
+  additional_documents?: Array<{
+    document_type: string;
+    file_url: string | File;
+  }>;
 }
 
 export interface ApplicationTracking {

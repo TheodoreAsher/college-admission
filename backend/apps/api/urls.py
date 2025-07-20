@@ -7,6 +7,7 @@ from drf_spectacular.views import (
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import *
+from .user_management import UserManagementViewSet
 
 # Create router for ViewSets
 router = DefaultRouter()
@@ -41,6 +42,9 @@ router.register(r'institutes', InstituteViewSet)
 router.register(r'blood-groups', BloodGroupViewSet)
 router.register(r'diseases', DiseaseViewSet)
 router.register(r'roles', RoleViewSet)
+
+# User Management
+router.register(r'users', UserManagementViewSet, basename='user-management')
 
 urlpatterns = [
     # OpenAPI Documentation

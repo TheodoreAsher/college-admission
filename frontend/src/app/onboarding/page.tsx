@@ -13,7 +13,7 @@ export default function OnboardingPage() {
   const { data: contact } = useQuery('contact-info', studentService.getContactInfo, { retry: false });
   const { data: education } = useQuery('education', studentService.getEducationalBackground, { 
     retry: false,
-    select: (data) => data?.results || data || []
+    select: (data: any) => data?.results || data || []
   });
   const { data: medical } = useQuery('medical-info', studentService.getMedicalInfo, { retry: false });
 

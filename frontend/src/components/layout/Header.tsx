@@ -11,26 +11,57 @@ const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const isActive = (path: string) => {
-    return pathname === path;
+    return pathname === path || pathname?.startsWith(path + '/');
   };
 
-  const isAdmin = user?.role?.role !== 'applicant';
-
-  const navLinks = isAdmin
-    ? [
-        { name: 'Dashboard', href: '/admin' },
-        { name: 'Applications', href: '/admin/applications' },
-        { name: 'Programs', href: '/admin/programs' },
-        { name: 'Payments', href: '/admin/payments' },
-        { name: 'Announcements', href: '/admin/announcements' },
-      ]
-    : [
-        { name: 'Dashboard', href: '/dashboard' },
-        { name: 'Programs', href: '/programs' },
-        { name: 'Applications', href: '/applications' },
-        { name: 'Payments', href: '/payments' },
-        { name: 'Profile', href: '/profile' },
-      ];
+  const userRole = user?.role?.role;
+  
+  // Define navigation links based on user role
+  let navLinks = [];
+  
+  if (userRole === 'admin') {
+    navLinks = [
+      { name: 'Dashboard', href: '/admin' },
+      { name: 'User Management', href: '/admin/users' },
+      { name: 'Applications', href: '/admin/applications' },
+      { name: 'Programs', href: '/admin/programs' },
+      { name: 'Payments', href: '/admin/finance' },
+      { name: 'Announcements', href: '/admin/announcements' },
+    ];
+  } else if (userRole === 'admission_officer') {
+    navLinks = [
+      { name: 'Dashboard', href: '/admin/admission' },
+      { name: 'Applications', href: '/admin/applications' },
+      { name: 'Programs', href: '/admin/programs' },
+      { name: 'Announcements', href: '/admin/announcements' },
+    ];
+  } else if (userRole === 'reviewer') {
+    navLinks = [
+      { name: 'Dashboard', href: '/admin/reviewer' },
+      { name: 'Applications', href: '/admin/applications' },
+    ];
+  } else if (userRole === 'accountant') {
+    navLinks = [
+      { name: 'Dashboard', href: '/admin/finance' },
+      { name: 'Payments', href: '/admin/finance' },
+      { name: 'Fee Structure', href: '/admin/finance/fee-structure' },
+    ];
+  } else if (userRole === 'data_entry') {
+    navLinks = [
+      { name: 'Dashboard', href: '/admin/data-entry' },
+      { name: 'Applications', href: '/admin/applications' },
+      { name: 'Lookup Data', href: '/admin/data-entry' },
+    ];
+  } else {
+    // Default for applicants
+    navLinks = [
+      { name: 'Dashboard', href: '/dashboard' },
+      { name: 'Programs', href: '/programs' },
+      { name: 'Applications', href: '/applications' },
+      { name: 'Payments', href: '/payments' },
+      { name: 'Profile', href: '/profile' },
+    ];
+  }
 
   return (
     <header className="bg-white shadow">
@@ -38,7 +69,7 @@ const Header: React.FC = () => {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href={isAdmin ? '/admin' : '/dashboard'} className="font-bold text-xl text-blue-600">
+              <Link href={userRole !== 'applicant' ? `/admin/${userRole === 'admission_officer' ? 'admission' : userRole === 'reviewer' ? 'reviewer' : userRole === 'accountant' ? 'finance' : userRole === 'data_entry' ? 'data-entry' : ''}` : '/dashboard'} className="font-bold text-xl text-blue-600">
                 College Admissions
               </Link>
             </div>

@@ -17,12 +17,12 @@ export default function MedicalInfoPage() {
   const { data: bloodGroups } = useQuery({
     queryKey: ['blood-groups'],
     queryFn: lookupService.getBloodGroups,
-    select: (data) => data?.results || data || []
+    select: (data: any) => data?.results || data || []
   });
   const { data: diseases } = useQuery({
     queryKey: ['diseases'],
     queryFn: lookupService.getDiseases,
-    select: (data) => data?.results || data || []
+    select: (data: any) => data?.results || data || []
   });
   
   const { register, handleSubmit, formState: { errors } } = useForm<MedicalInformation>({

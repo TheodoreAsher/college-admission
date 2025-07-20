@@ -8,7 +8,9 @@ import {
   paymentService,
   dashboardService,
   lookupService,
+  userManagementService,
 } from '@/lib/services';
+import { User } from '@/types';
 
 // Create a client
 export const queryClient = new QueryClient({
@@ -79,6 +81,13 @@ export const usePrograms = () => {
   return useQuery({
     queryKey: ['programs'],
     queryFn: programService.getPrograms,
+  });
+};
+
+export const useCourses = () => {
+  return useQuery({
+    queryKey: ['courses'],
+    queryFn: programService.getCourses,
   });
 };
 
@@ -354,6 +363,116 @@ export const useCreateAnnouncement = () => {
     },
     onError: () => {
       toast.error('Failed to create announcement');
+    },
+  });
+};
+
+// User Management Hooks
+export const useUsers = () => {
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: userManagementService.getUsers,
+  });
+};
+
+export const useRoles = () => {
+  return useQuery({
+    queryKey: ['roles'],
+    queryFn: lookupService.getRoles,
+  });
+};
+
+export const useApplicationStatistics = () => {
+  return useQuery({
+    queryKey: ['applicationStatistics'],
+    queryFn: applicationService.getApplicationStatistics,
+  });
+};
+
+export const useUser = (id: number) => {
+  return useQuery({
+    queryKey: ['user', id],
+    queryFn: () => userManagementService.getUser(id),
+    enabled: !!id,
+  });
+};
+
+export const useCreateUser = () => {
+  return useMutation({
+    mutationFn: userManagementService.createUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success('User created successfully');
+    },
+    onError: () => {
+      toast.error('Failed to create user');
+    },
+  });
+};
+
+export const useUpdateUser = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<User> }) =>
+      userManagementService.updateUser(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success('User updated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to update user');
+    },
+  });
+};
+
+export const useDeleteUser = () => {
+  return useMutation({
+    mutationFn: userManagementService.deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success('User deleted successfully');
+    },
+    onError: () => {
+      toast.error('Failed to delete user');
+    },
+  });
+};
+
+export const useActivateUser = () => {
+  return useMutation({
+    mutationFn: userManagementService.activateUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success('User activated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to activate user');
+    },
+  });
+};
+
+export const useDeactivateUser = () => {
+  return useMutation({
+    mutationFn: userManagementService.deactivateUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success('User deactivated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to deactivate user');
+    },
+  });
+};
+
+export const useChangeUserRole = () => {
+  return useMutation({
+    mutationFn: ({ id, roleId }: { id: number; roleId: number }) =>
+      userManagementService.changeUserRole(id, roleId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success('User role changed successfully');
+    },
+    onError: () => {
+      toast.error('Failed to change user role');
     },
   });
 };

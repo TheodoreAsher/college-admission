@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { queryClient } from '@/hooks/useApi';
 import { api } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
@@ -12,28 +13,24 @@ import { Plus, Megaphone } from 'lucide-react';
 function AnnouncementsContent() {
   const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
-  const queryClient = useQueryClient();
+  // queryClient is imported from useApi
   
-  const { data: announcements } = useQuery('announcements', async () => {
+  const { data: announcements } = useQuery({queryKey: ['announcements'], queryFn: async () => {
     const response = await api.get('/announcements/');
     return response.data.results || response.data;
-  }, {
-    select: (data) => Array.isArray(data) ? data : []
-  });
+  }, select: (data) => Array.isArray(data) ? data : []});
   
   const { register, handleSubmit, reset } = useForm();
   
-  const createMutation = useMutation(
-    (data: any) => api.post('/announcements/', data),
-    {
-      onSuccess: () => {
-        toast.success('Announcement created!');
-        queryClient.invalidateQueries('announcements');
-        reset();
-        setShowForm(false);
-      }
+  const createMutation = useMutation({
+    mutationFn: (data: any) => api.post('/announcements/', data),
+    onSuccess: () => {
+      toast.success('Announcement created!');
+      queryClient.invalidateQueries({ queryKey: ['announcements'] });
+      reset();
+      setShowForm(false);
     }
-  );
+  });
 
   const canCreate = ['admin', 'admission_officer'].includes(user?.role?.role || '');
 
@@ -52,7 +49,7 @@ function AnnouncementsContent() {
       {showForm && (
         <div className="card">
           <h3 className="font-medium mb-4">Create Announcement</h3>
-          <form onSubmit={handleSubmit(createMutation.mutate)} className="space-y-4">
+          <form onSubmit={handleSubmit((data) => createMutation.mutate(data))} className="space-y-4">
             <input
               {...register('title', { required: true })}
               className="input-field"
@@ -65,8 +62,8 @@ function AnnouncementsContent() {
               placeholder="Announcement content"
             />
             <div className="flex space-x-2">
-              <button type="submit" disabled={createMutation.isLoading} className="btn-primary">
-                {createMutation.isLoading ? 'Creating...' : 'Create'}
+              <button type="submit" disabled={createMutation.isPending} className="btn-primary">
+                {createMutation.isPending ? 'Creating...' : 'Create'}
               </button>
               <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">
                 Cancel
