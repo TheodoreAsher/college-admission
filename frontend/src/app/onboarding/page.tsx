@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { studentService } from '@/lib/services';
 import Link from 'next/link';
 import { CheckCircle, XCircle, ArrowRight } from 'lucide-react';
@@ -9,13 +9,27 @@ import { CheckCircle, XCircle, ArrowRight } from 'lucide-react';
 export default function OnboardingPage() {
   const { user } = useAuth();
   
-  const { data: personal } = useQuery('personal-info', studentService.getPersonalInfo, { retry: false });
-  const { data: contact } = useQuery('contact-info', studentService.getContactInfo, { retry: false });
-  const { data: education } = useQuery('education', studentService.getEducationalBackground, { 
+  const { data: personal } = useQuery({ 
+    queryKey: ['personal-info'], 
+    queryFn: studentService.getPersonalInfo, 
+    retry: false 
+  });
+  const { data: contact } = useQuery({ 
+    queryKey: ['contact-info'], 
+    queryFn: studentService.getContactInfo, 
+    retry: false 
+  });
+  const { data: education } = useQuery({ 
+    queryKey: ['education'], 
+    queryFn: studentService.getEducationalBackground, 
     retry: false,
     select: (data: any) => data?.results || data || []
   });
-  const { data: medical } = useQuery('medical-info', studentService.getMedicalInfo, { retry: false });
+  const { data: medical } = useQuery({ 
+    queryKey: ['medical-info'], 
+    queryFn: studentService.getMedicalInfo, 
+    retry: false 
+  });
 
   if (user?.role?.role !== 'applicant') {
     return (

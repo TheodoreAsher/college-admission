@@ -4,21 +4,26 @@ import { Application } from '@/types';
 
 // Helper function to load and add images to PDF with proper error handling
 // Convert File to string URL
-const getImageUrl = (file: File | string): string => {
-  return typeof file === 'string' ? file : URL.createObjectURL(file);
+const getImageUrl = (file: File | string | undefined): string => {
+  if (!file) return '';
+  if (typeof file === 'string') return file;
+  if (file instanceof File) return URL.createObjectURL(file);
+  return '';
 };
 
 const loadAndAddImage = async (
     doc: jsPDF,
-    url: string | File,
+    url: string | File | undefined,
     x: number,
     y: number,
     width: number,
     height: number,
     title: string
 ): Promise<boolean> => {
+  if (!url) return false;
   // Convert File to string URL if needed
   const imageUrl = getImageUrl(url);
+  if (!imageUrl) return false;
   try {
     const img = new Image();
     img.crossOrigin = 'Anonymous';
@@ -369,7 +374,7 @@ export const generateApplicationPDF = async (application: Application): Promise<
       startY: 30,
       head: [['Field', 'Value']],
       body: [
-        ['Blood Group', medicalInfo.blood_group_name],
+        ['Blood Group', medicalInfo.blood_group_name || 'N/A'],
         ['Disabled', medicalInfo.is_disabled ? 'Yes' : 'No'],
         ['Diseases', diseasesList]
       ],

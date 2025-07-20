@@ -59,17 +59,17 @@ const Modal: React.FC<ModalProps> = ({
     full: 'max-w-full mx-4'
   };
 
-  if (!isOpen) return null;
-
-  console.log('Rendering modal with isOpen:', isOpen);
-  
-  // Client-side only code for portal
+  // Client-side only code for portal - hooks must be called before any conditional returns
   const [mounted, setMounted] = React.useState(false);
   
+  // Second useEffect for mounting state - MUST be before any conditional returns
   useEffect(() => {
     setMounted(true);
     return () => setMounted(false);
   }, []);
+  
+  // If modal is not open, return null after all hooks are called
+  if (!isOpen) return null;
   
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 p-4">

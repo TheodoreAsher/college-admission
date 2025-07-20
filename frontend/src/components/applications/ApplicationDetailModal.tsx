@@ -17,18 +17,20 @@ const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({
   onClose,
   application,
 }) => {
+  // Always define these variables, but use safe defaults when application is null
+  const student = application?.student || {};
+  const user = student?.user || {};
+  
+  // Return early but after all hooks are called
   if (!application) {
-    return isOpen ? (
+    return (
       <Modal isOpen={isOpen} onClose={onClose} title="Application Details" size="xl">
         <div className="p-6 text-center text-gray-600 text-sm">
           <p>No application data available.</p>
         </div>
       </Modal>
-    ) : null;
+    );
   }
-
-  const student = application.student;
-  const user = student.user;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Application Details" size="xl">
@@ -48,8 +50,8 @@ const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({
               />
             ) : (
               <div className="h-32 w-32 rounded-full bg-gray-200 flex items-center justify-center text-3xl font-bold text-gray-500 border-2 border-gray-300 shadow-sm">
-                {user.first_name[0]}
-                {user.last_name[0]}
+                {user?.first_name?.[0] || ''}
+                {user?.last_name?.[0] || ''}
               </div>
             )}
 

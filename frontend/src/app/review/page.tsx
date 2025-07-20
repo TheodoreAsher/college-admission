@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { applicationService } from '@/lib/services';
 import toast from 'react-hot-toast';
 import ProtectedRoute from '@/components/ui/ProtectedRoute';
@@ -13,24 +13,26 @@ function ReviewContent() {
   const [statusUpdate, setStatusUpdate] = useState({ status_id: '', remarks: '' });
   const queryClient = useQueryClient();
   
-  const { data: applications } = useQuery('review-applications', applicationService.getApplications, {
+  const { data: applications } = useQuery({
+    queryKey: ['review-applications'],
+    queryFn: applicationService.getApplications,
     select: (data: any) => data?.results || data || []
   });
-  const { data: statuses } = useQuery('application-statuses', applicationService.getApplicationStatuses, {
+  const { data: statuses } = useQuery({
+    queryKey: ['application-statuses'],
+    queryFn: applicationService.getApplicationStatuses,
     select: (data: any) => data?.results || data || []
   });
   
-  const updateStatusMutation = useMutation(
-    ({ id, data }: { id: number; data: any }) => applicationService.updateApplicationStatus(id, data),
-    {
-      onSuccess: () => {
-        toast.success('Application status updated!');
-        queryClient.invalidateQueries('review-applications');
-        setSelectedApp(null);
-        setStatusUpdate({ status_id: '', remarks: '' });
-      }
+  const updateStatusMutation = useMutation<any, Error, { id: number; data: any }>({
+    mutationFn: ({ id, data }: { id: number; data: any }) => applicationService.updateApplicationStatus(id, data),
+    onSuccess: () => {
+      toast.success('Application status updated!');
+      queryClient.invalidateQueries({ queryKey: ['review-applications'] });
+      setSelectedApp(null);
+      setStatusUpdate({ status_id: '', remarks: '' });
     }
-  );
+  });
 
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -129,11 +131,11 @@ function ReviewContent() {
                     onClick={() => updateStatusMutation.mutate({
                       id: selectedApp.id,
                       data: statusUpdate
-                    })}
-                    disabled={!statusUpdate.status_id || updateStatusMutation.isLoading}
+                    } as any)}
+                    disabled={!statusUpdate.status_id || updateStatusMutation.isPending}
                     className="btn-primary flex-1"
                   >
-                    {updateStatusMutation.isLoading ? 'Updating...' : 'Update'}
+                    {updateStatusMutation.isPending ? 'Updating...' : 'Update'}
                   </button>
                   <button
                     onClick={() => setSelectedApp(null)}
