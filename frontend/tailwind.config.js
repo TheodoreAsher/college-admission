@@ -15,6 +15,20 @@ module.exports = {
           700: '#1d4ed8',
         },
       },
+      keyframes: {
+        'flip-horizontal': {
+          '0%, 100%': { transform: 'rotateY(0deg)' },
+          '50%': { transform: 'rotateY(180deg)' }
+        },
+        'marquee': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' }
+        }
+      },
+      animation: {
+        'flip': 'flip-horizontal 5s ease-in-out infinite',
+        'ticker': 'marquee 30s linear infinite'
+      },
     },
   },
   plugins: [],

@@ -9,13 +9,15 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const pathname = usePathname();
   
-  // Don't show header on login and register pages
+  // Don't show header on login, register, and landing pages
   const isAuthPage = pathname?.startsWith('/auth/');
+  const isLandingPage = pathname === '/landing';
+  const shouldShowHeader = !isAuthPage && !isLandingPage;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {!isAuthPage && <Header />}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      {shouldShowHeader && <Header />}
+      <main className={`${shouldShowHeader ? 'max-w-7xl mx-auto py-6 sm:px-6 lg:px-8' : ''}`}>
         {children}
       </main>
     </div>
