@@ -7,16 +7,17 @@ import { lookupService } from '@/lib/services';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 import ProtectedRoute from '@/components/ui/ProtectedRoute';
+import RoleGuard from '@/components/ui/RoleGuard';
 
 function SetupContent() {
   const [activeTab, setActiveTab] = useState('degrees');
   const queryClient = useQueryClient();
   
   const { data: degrees } = useQuery('degrees', lookupService.getDegrees, {
-    select: (data) => data?.results || data || []
+    select: (data: any) => data?.results || data || []
   });
   const { data: institutes } = useQuery('institutes', lookupService.getInstitutes, {
-    select: (data) => data?.results || data || []
+    select: (data: any) => data?.results || data || []
   });
 
   const addDegreeMutation = useMutation(
@@ -72,7 +73,7 @@ function SetupContent() {
           <div className="card">
             <h3 className="font-medium mb-4">Add New Degree</h3>
             <form onSubmit={handleDegreeSubmit((data) => {
-              addDegreeMutation.mutate(data);
+              addDegreeMutation.mutate({ name: data.name as string });
               resetDegree();
             })} className="flex space-x-2">
               <input
@@ -104,7 +105,7 @@ function SetupContent() {
           <div className="card">
             <h3 className="font-medium mb-4">Add New Institute</h3>
             <form onSubmit={handleInstituteSubmit((data) => {
-              addInstituteMutation.mutate(data);
+              addInstituteMutation.mutate({ name: data.name as string });
               resetInstitute();
             })} className="flex space-x-2">
               <input
@@ -136,8 +137,10 @@ function SetupContent() {
 
 export default function SetupPage() {
   return (
-    <ProtectedRoute allowedRoles={['admin', 'data_entry']}>
-      <SetupContent />
+    <ProtectedRoute>
+      <RoleGuard allowedRoles={['admin', 'data_entry']}>
+        <SetupContent />
+      </RoleGuard>
     </ProtectedRoute>
   );
 }

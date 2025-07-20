@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { applicationService, lookupService } from '@/lib/services';
+import { applicationService } from '@/lib/services';
 import toast from 'react-hot-toast';
 import ProtectedRoute from '@/components/ui/ProtectedRoute';
+import RoleGuard from '@/components/ui/RoleGuard';
 import { Eye, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 function ReviewContent() {
@@ -13,10 +14,10 @@ function ReviewContent() {
   const queryClient = useQueryClient();
   
   const { data: applications } = useQuery('review-applications', applicationService.getApplications, {
-    select: (data) => data?.results || data || []
+    select: (data: any) => data?.results || data || []
   });
-  const { data: statuses } = useQuery('application-statuses', lookupService.getApplicationStatuses, {
-    select: (data) => data?.results || data || []
+  const { data: statuses } = useQuery('application-statuses', applicationService.getApplicationStatuses, {
+    select: (data: any) => data?.results || data || []
   });
   
   const updateStatusMutation = useMutation(
@@ -157,8 +158,10 @@ function ReviewContent() {
 
 export default function ReviewPage() {
   return (
-    <ProtectedRoute allowedRoles={['admin', 'admission_officer', 'reviewer']}>
-      <ReviewContent />
+    <ProtectedRoute>
+      <RoleGuard allowedRoles={['admin', 'admission_officer', 'reviewer']}>
+        <ReviewContent />
+      </RoleGuard>
     </ProtectedRoute>
   );
 }
