@@ -5,7 +5,17 @@ import { useStudentProfile } from '@/hooks/useApi';
 import ProtectedRoute from '@/components/ui/ProtectedRoute';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Link from 'next/link';
-import { User, MapPin, BookOpen, Activity, Check, X } from 'lucide-react';
+import { 
+  User, 
+  MapPin, 
+  BookOpen, 
+  Activity, 
+  CheckCircle, 
+  AlertCircle,
+  ChevronRight,
+  Camera,
+  Edit
+} from 'lucide-react';
 
 export default function ProfilePage() {
   return (
@@ -30,30 +40,42 @@ function ProfileContent() {
     {
       id: 'personal',
       title: 'Personal Information',
+      description: 'Your personal details and identification',
       icon: <User className="h-5 w-5" />,
       isComplete: !!profile?.personal_info,
       href: '/profile/personal',
+      color: 'text-blue-500',
+      bgColor: 'bg-blue-50',
     },
     {
       id: 'contact',
       title: 'Contact Information',
+      description: 'Your address and contact details',
       icon: <MapPin className="h-5 w-5" />,
       isComplete: !!profile?.contact_info,
       href: '/profile/contact',
+      color: 'text-indigo-500',
+      bgColor: 'bg-indigo-50',
     },
     {
       id: 'education',
       title: 'Educational Background',
+      description: 'Your academic qualifications and certificates',
       icon: <BookOpen className="h-5 w-5" />,
       isComplete: profile?.educational_records && profile.educational_records.length > 0,
       href: '/profile/education',
+      color: 'text-purple-500',
+      bgColor: 'bg-purple-50',
     },
     {
       id: 'medical',
       title: 'Medical Information',
+      description: 'Your health information and medical history',
       icon: <Activity className="h-5 w-5" />,
       isComplete: !!profile?.medical_info,
       href: '/profile/medical',
+      color: 'text-green-500',
+      bgColor: 'bg-green-50',
     },
   ];
 
@@ -65,58 +87,158 @@ function ProfileContent() {
           Complete your profile to apply for programs
         </p>
 
-        <div className="mt-6">
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-              <div>
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  Profile Information
-                </h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                  Complete all sections to apply for programs
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Profile Summary Card */}
+          <div className="lg:col-span-1">
+            <div className="bg-white shadow rounded-xl border border-gray-100 overflow-hidden">
+              <div className="p-6 flex flex-col items-center text-center">
+                <div className="relative">
+                  {profile?.picture ? (
+                    <img
+                      src={typeof profile.picture === 'string' 
+                        ? (profile.picture.startsWith('/') 
+                            ? `${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:8000'}${profile.picture}` 
+                            : profile.picture) 
+                        : URL.createObjectURL(profile.picture)}
+                      alt="Profile"
+                      className="h-32 w-32 rounded-full object-cover border-4 border-white shadow"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/placeholder-profile.svg';
+                      }}
+                    />
+                  ) : (
+                    <div className="h-32 w-32 rounded-full bg-blue-100 flex items-center justify-center border-4 border-white shadow">
+                      <span className="text-blue-600 text-4xl font-bold">
+                        {profile?.user?.first_name?.[0] || ''}
+                        {profile?.user?.last_name?.[0] || ''}
+                      </span>
+                    </div>
+                  )}
+                  <Link 
+                    href="/profile/picture" 
+                    className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition"
+                    title="Update profile picture"
+                  >
+                    <Camera className="h-4 w-4" />
+                  </Link>
+                </div>
+                
+                <h2 className="mt-4 text-xl font-semibold text-gray-900">
+                  {profile?.user?.first_name} {profile?.user?.last_name}
+                </h2>
+                <p className="text-sm text-gray-500">{profile?.user?.email}</p>
+                
+                <div className="mt-4 w-full bg-gray-200 rounded-full h-2.5">
+                  <div 
+                    className="bg-blue-600 h-2.5 rounded-full" 
+                    style={{ width: `${profile?.profile_completion || 0}%` }}
+                  ></div>
+                </div>
+                <p className="mt-2 text-sm font-medium text-gray-700">
+                  {profile?.profile_completion || 0}% Complete
                 </p>
               </div>
-              <div>
-                <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                  {profile?.profile_completion || 0}% Complete
+              
+              <div className="border-t border-gray-100 px-6 py-4">
+                <div className="flex justify-between items-center">
+                  <div className="text-sm text-gray-500">Student ID</div>
+                  <div className="text-sm font-medium">{profile?.id || 'N/A'}</div>
+                </div>
+              </div>
+              
+              <div className="border-t border-gray-100 px-6 py-4">
+                <div className="flex justify-between items-center">
+                  <div className="text-sm text-gray-500">Verification</div>
+                  <div className="flex items-center">
+                    {profile?.user?.is_verified ? (
+                      <>
+                        <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+                        <span className="text-sm font-medium text-green-700">Verified</span>
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="h-4 w-4 text-amber-500 mr-1" />
+                        <span className="text-sm font-medium text-amber-700">Pending</span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div className="border-t border-gray-200">
-              <dl>
-                {sections.map((section, index) => (
-                  <div
-                    key={section.id}
-                    className={`${
-                      index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
-                    } px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6`}
+          </div>
+          
+          {/* Profile Sections */}
+          <div className="lg:col-span-3">
+            <div className="bg-white shadow rounded-xl border border-gray-100 overflow-hidden">
+              <div className="px-6 py-5 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900">Profile Sections</h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Complete all sections to be eligible for program applications
+                </p>
+              </div>
+              
+              <div className="divide-y divide-gray-100">
+                {sections.map((section) => (
+                  <Link 
+                    key={section.id} 
+                    href={section.href}
+                    className="block hover:bg-gray-50 transition"
                   >
-                    <dt className="text-sm font-medium text-gray-500 flex items-center">
-                      <span className="mr-2">{section.icon}</span>
-                      {section.title}
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-between items-center">
+                    <div className="px-6 py-5 flex items-center justify-between">
+                      <div className="flex items-start">
+                        <div className={`${section.bgColor} ${section.color} p-3 rounded-lg mr-4`}>
+                          {section.icon}
+                        </div>
+                        <div>
+                          <h4 className="text-base font-medium text-gray-900">{section.title}</h4>
+                          <p className="mt-1 text-sm text-gray-500">{section.description}</p>
+                        </div>
+                      </div>
+                      
                       <div className="flex items-center">
                         {section.isComplete ? (
-                          <Check className="h-5 w-5 text-green-500 mr-2" />
+                          <div className="flex items-center text-green-700 mr-3">
+                            <CheckCircle className="h-5 w-5 text-green-500 mr-1" />
+                            <span className="text-sm font-medium">Complete</span>
+                          </div>
                         ) : (
-                          <X className="h-5 w-5 text-red-500 mr-2" />
+                          <div className="flex items-center text-amber-700 mr-3">
+                            <AlertCircle className="h-5 w-5 text-amber-500 mr-1" />
+                            <span className="text-sm font-medium">Incomplete</span>
+                          </div>
                         )}
-                        <span>
-                          {section.isComplete ? 'Completed' : 'Not completed'}
-                        </span>
+                        
+                        <div className="flex items-center">
+                          <span className="text-sm font-medium text-blue-600 mr-1">
+                            {section.isComplete ? 'Update' : 'Complete'}
+                          </span>
+                          <ChevronRight className="h-5 w-5 text-gray-400" />
+                        </div>
                       </div>
-                      <Link
-                        href={section.href}
-                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        {section.isComplete ? 'Update' : 'Complete'}
-                      </Link>
-                    </dd>
-                  </div>
+                    </div>
+                  </Link>
                 ))}
-              </dl>
+              </div>
+            </div>
+            
+            {/* Account Settings */}
+            <div className="mt-6 bg-white shadow rounded-xl border border-gray-100 overflow-hidden">
+              <div className="px-6 py-5 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900">Account Settings</h3>
+              </div>
+              
+              <div className="divide-y divide-gray-100">
+                <Link href="/profile/account" className="block hover:bg-gray-50 transition">
+                  <div className="px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Edit className="h-5 w-5 text-gray-400 mr-3" />
+                      <span className="text-sm font-medium text-gray-900">Update Account Information</span>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

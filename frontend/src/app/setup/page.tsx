@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { lookupService } from '@/lib/services';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -13,32 +13,32 @@ function SetupContent() {
   const [activeTab, setActiveTab] = useState('degrees');
   const queryClient = useQueryClient();
   
-  const { data: degrees } = useQuery('degrees', lookupService.getDegrees, {
+  const { data: degrees = [] } = useQuery({
+    queryKey: ['degrees'],
+    queryFn: lookupService.getDegrees,
     select: (data: any) => data?.results || data || []
   });
-  const { data: institutes } = useQuery('institutes', lookupService.getInstitutes, {
+  const { data: institutes = [] } = useQuery({
+    queryKey: ['institutes'],
+    queryFn: lookupService.getInstitutes,
     select: (data: any) => data?.results || data || []
   });
 
-  const addDegreeMutation = useMutation(
-    (data: { name: string }) => api.post('/degrees/', data),
-    {
-      onSuccess: () => {
-        toast.success('Degree added!');
-        queryClient.invalidateQueries('degrees');
-      }
+  const addDegreeMutation = useMutation<any, Error, { name: string }>({
+    mutationFn: (data: { name: string }) => api.post('/degrees/', data),
+    onSuccess: () => {
+      toast.success('Degree added!');
+      queryClient.invalidateQueries({ queryKey: ['degrees'] });
     }
-  );
+  });
 
-  const addInstituteMutation = useMutation(
-    (data: { name: string }) => api.post('/institutes/', data),
-    {
-      onSuccess: () => {
-        toast.success('Institute added!');
-        queryClient.invalidateQueries('institutes');
-      }
+  const addInstituteMutation = useMutation<any, Error, { name: string }>({
+    mutationFn: (data: { name: string }) => api.post('/institutes/', data),
+    onSuccess: () => {
+      toast.success('Institute added!');
+      queryClient.invalidateQueries({ queryKey: ['institutes'] });
     }
-  );
+  });
 
   const { register: registerDegree, handleSubmit: handleDegreeSubmit, reset: resetDegree } = useForm();
   const { register: registerInstitute, handleSubmit: handleInstituteSubmit, reset: resetInstitute } = useForm();
@@ -81,7 +81,7 @@ function SetupContent() {
                 className="input-field flex-1"
                 placeholder="Degree name (e.g., Bachelor of Science)"
               />
-              <button type="submit" disabled={addDegreeMutation.isLoading} className="btn-primary">
+              <button type="submit" disabled={addDegreeMutation.isPending} className="btn-primary">
                 Add
               </button>
             </form>
@@ -113,7 +113,7 @@ function SetupContent() {
                 className="input-field flex-1"
                 placeholder="Institute name"
               />
-              <button type="submit" disabled={addInstituteMutation.isLoading} className="btn-primary">
+              <button type="submit" disabled={addInstituteMutation.isPending} className="btn-primary">
                 Add
               </button>
             </form>

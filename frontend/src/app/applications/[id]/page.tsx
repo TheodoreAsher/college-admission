@@ -6,7 +6,7 @@ import { useApplication, useApplicationTracking } from '@/hooks/useApi';
 import ProtectedRoute from '@/components/ui/ProtectedRoute';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { FileDown, ArrowLeft } from 'lucide-react';
+import { FileDown, ArrowLeft, FileText } from 'lucide-react';
 import { generateApplicationPDF } from '@/utils/pdfGenerator';
 import Image from 'next/image';
 
@@ -335,7 +335,7 @@ export default function ApplicationDetailPage({ params }: { params: { id: string
                         {personalInfo.cnic_front_img ? (
                           <div className="border border-gray-200 rounded-lg overflow-hidden">
                             <img 
-                              src={personalInfo.cnic_front_img} 
+                              src={personalInfo.cnic_front_img as string} 
                               alt="CNIC Front" 
                               className="w-full h-auto"
                               onError={(e) => {
@@ -354,7 +354,7 @@ export default function ApplicationDetailPage({ params }: { params: { id: string
                         {personalInfo.cnic_back_img ? (
                           <div className="border border-gray-200 rounded-lg overflow-hidden">
                             <img 
-                              src={personalInfo.cnic_back_img} 
+                              src={personalInfo.cnic_back_img as string} 
                               alt="CNIC Back" 
                               className="w-full h-auto"
                               onError={(e) => {
@@ -383,7 +383,7 @@ export default function ApplicationDetailPage({ params }: { params: { id: string
                           {record.certificate ? (
                             <div className="border border-gray-200 rounded-lg overflow-hidden">
                               <img 
-                                src={record.certificate} 
+                                src={record.certificate as string} 
                                 alt={`${record.degree_name} Certificate`} 
                                 className="w-full h-auto"
                                 onError={(e) => {
@@ -408,7 +408,7 @@ export default function ApplicationDetailPage({ params }: { params: { id: string
                     <h4 className="text-md font-medium text-gray-700 mb-2">Application QR Code</h4>
                     <div className="w-40 h-40 border border-gray-200 rounded-lg overflow-hidden">
                       <img 
-                        src={application.application_qrcode} 
+                        src={application.application_qrcode as string} 
                         alt="Application QR Code" 
                         className="w-full h-auto"
                         onError={(e) => {
