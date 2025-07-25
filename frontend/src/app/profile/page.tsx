@@ -4,6 +4,7 @@ import React from 'react';
 import { useStudentProfile } from '@/hooks/useApi';
 import ProtectedRoute from '@/components/ui/ProtectedRoute';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ProfileBreadcrumb from '@/components/ui/ProfileBreadcrumb';
 import Link from 'next/link';
 import { 
   User, 
@@ -82,6 +83,7 @@ function ProfileContent() {
   return (
     <div className="py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ProfileBreadcrumb items={[{ label: 'Profile', current: true }]} />
         <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
         <p className="mt-1 text-sm text-gray-500">
           Complete your profile to apply for programs

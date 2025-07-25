@@ -6,12 +6,13 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '@/hooks/useAuth';
 import { LoginData } from '@/types';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { ArrowLeft, Mail, Lock, Megaphone } from 'lucide-react';
+import { ArrowLeft, Mail, Lock, Megaphone, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -106,8 +107,8 @@ export default function LoginPage() {
                   <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                   <input
                       id="password"
-                      type="password"
-                      className="pl-10 pr-3 py-2 w-full border border-gray-300 rounded-md text-sm shadow-sm focus:ring-green-600 focus:outline-none"
+                      type={showPassword ? 'text' : 'password'}
+                      className="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-md text-sm shadow-sm focus:ring-green-600 focus:outline-none"
                       placeholder="••••••••"
                       {...register('password', {
                         required: 'Password is required',
@@ -117,6 +118,13 @@ export default function LoginPage() {
                         },
                       })}
                   />
+                  <button
+                      type="button"
+                      className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 hover:text-gray-600"
+                      onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff /> : <Eye />}
+                  </button>
                 </div>
                 {errors.password && (
                     <p className="text-xs text-red-600 mt-1">{errors.password.message}</p>

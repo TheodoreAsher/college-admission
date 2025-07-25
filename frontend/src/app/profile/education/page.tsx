@@ -10,6 +10,7 @@ import { Plus, Trash2, BookOpen, Eye, X, Edit } from 'lucide-react';
 import FileUpload from '@/components/forms/FileUpload';
 import { queryClient } from '@/hooks/useApi';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ProfileBreadcrumb from '@/components/ui/ProfileBreadcrumb';
 
 export default function EducationPage() {
   const [showForm, setShowForm] = useState(false);
@@ -101,6 +102,10 @@ export default function EducationPage() {
   return (
       <div className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ProfileBreadcrumb items={[
+            { label: 'Profile', href: '/profile' },
+            { label: 'Educational Background', current: true }
+          ]} />
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-semibold text-gray-900">Educational Background</h1>

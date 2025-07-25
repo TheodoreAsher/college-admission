@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import FileUpload from '@/components/forms/FileUpload';
 import { useState } from 'react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ProfileBreadcrumb from '@/components/ui/ProfileBreadcrumb';
 import { queryClient } from '@/hooks/useApi';
 
 export default function PersonalInfoPage() {
@@ -66,6 +67,10 @@ export default function PersonalInfoPage() {
   return (
     <div className="py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ProfileBreadcrumb items={[
+          { label: 'Profile', href: '/profile' },
+          { label: 'Personal Information', current: true }
+        ]} />
         <h1 className="text-2xl font-semibold text-gray-900">Personal Information</h1>
         <p className="mt-1 text-sm text-gray-500">
           Provide your personal details for admission purposes
