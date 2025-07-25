@@ -7,6 +7,7 @@ import { useStudentProfile, useApplications, useAnnouncements } from '@/hooks/us
 import ProtectedRoute from '@/components/ui/ProtectedRoute';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import StatusBadge from '@/components/ui/StatusBadge';
+import ProfileIncompleteModal from '@/components/ui/ProfileIncompleteModal';
 import { 
   BookOpen, 
   FileText, 
@@ -238,6 +239,13 @@ export default function DashboardPage() {
             </>
           )}
         </div>
+        
+        {profile && (profile.profile_completion || 0) < 100 && (
+          <ProfileIncompleteModal 
+            completionPercentage={profile.profile_completion || 0}
+            showInitially={true}
+          />
+        )}
       </div>
     </ProtectedRoute>
   );
